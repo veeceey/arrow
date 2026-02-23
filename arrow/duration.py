@@ -143,14 +143,15 @@ class Duration:
 
         # Handle sub-second precision
         microseconds = td.microseconds
+        total_seconds_val: Union[int, float] = seconds
         if microseconds:
-            seconds = seconds + microseconds / 1_000_000
+            total_seconds_val = seconds + microseconds / 1_000_000
 
         return cls(
             days=days,
             hours=hours,
             minutes=minutes,
-            seconds=seconds,
+            seconds=total_seconds_val,
         )
 
     def to_relativedelta(self) -> relativedelta:
@@ -166,9 +167,7 @@ class Duration:
             hours=int(self.hours),
             minutes=int(self.minutes),
             seconds=int(self.seconds),
-            microseconds=int(
-                (self.seconds - int(self.seconds)) * 1_000_000
-            ),
+            microseconds=int((self.seconds - int(self.seconds)) * 1_000_000),
         )
 
     def to_timedelta(self) -> timedelta:
@@ -179,14 +178,9 @@ class Duration:
         duration to an Arrow object directly.
         """
         total_days = (
-            self.years * 365.25
-            + self.months * 30.44
-            + self.weeks * 7
-            + self.days
+            self.years * 365.25 + self.months * 30.44 + self.weeks * 7 + self.days
         )
-        total_seconds = (
-            self.hours * 3600 + self.minutes * 60 + self.seconds
-        )
+        total_seconds = self.hours * 3600 + self.minutes * 60 + self.seconds
         return timedelta(days=total_days, seconds=total_seconds)
 
     def isoformat(self) -> str:
@@ -295,8 +289,15 @@ class Duration:
 
     def __hash__(self) -> int:
         return hash(
-            (self.years, self.months, self.weeks, self.days,
-             self.hours, self.minutes, self.seconds)
+            (
+                self.years,
+                self.months,
+                self.weeks,
+                self.days,
+                self.hours,
+                self.minutes,
+                self.seconds,
+            )
         )
 
 

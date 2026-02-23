@@ -1,5 +1,6 @@
-import pytest
 from datetime import timedelta
+
+import pytest
 
 import arrow
 from arrow.duration import Duration
@@ -221,7 +222,10 @@ class TestDurationConversions:
 class TestDurationRepr:
     def test_repr_full(self):
         d = Duration(years=1, months=2, days=3, hours=4, minutes=5, seconds=6)
-        assert repr(d) == "Duration(years=1, months=2, days=3, hours=4, minutes=5, seconds=6)"
+        assert (
+            repr(d)
+            == "Duration(years=1, months=2, days=3, hours=4, minutes=5, seconds=6)"
+        )
 
     def test_repr_empty(self):
         d = Duration()
@@ -235,4 +239,5 @@ class TestDurationRepr:
 class TestDurationImport:
     def test_importable_from_arrow(self):
         from arrow import Duration as D
+
         assert D is Duration
