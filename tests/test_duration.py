@@ -236,6 +236,48 @@ class TestDurationRepr:
         assert repr(d) == "Duration(days=5, hours=3)"
 
 
+class TestDurationNotImplemented:
+    def test_eq_non_duration(self):
+        d = Duration(years=1)
+        assert d.__eq__("not a duration") is NotImplemented
+
+    def test_add_non_duration(self):
+        d = Duration(years=1)
+        assert d.__add__("not a duration") is NotImplemented
+
+    def test_radd_non_arrow(self):
+        d = Duration(years=1)
+        assert d.__radd__("not an arrow") is NotImplemented
+
+    def test_sub_non_duration(self):
+        d = Duration(years=1)
+        assert d.__sub__("not a duration") is NotImplemented
+
+
+class TestDurationFromTimedelta:
+    def test_from_timedelta_with_microseconds(self):
+        td = timedelta(days=1, seconds=30, microseconds=500000)
+        d = Duration.from_timedelta(td)
+        assert d.days == 1
+        assert d.seconds == 30.5
+
+    def test_to_timedelta_with_years_months(self):
+        d = Duration(years=1, months=6)
+        td = d.to_timedelta()
+        expected_days = 1 * 365.25 + 6 * 30.44
+        assert td == timedelta(days=expected_days)
+
+
+class TestDurationFormatNum:
+    def test_format_fractional_value(self):
+        d = Duration(seconds=1.5)
+        assert str(d) == "PT1.5S"
+
+    def test_format_whole_float(self):
+        d = Duration(seconds=2.0)
+        assert str(d) == "PT2S"
+
+
 class TestDurationImport:
     def test_importable_from_arrow(self):
         from arrow import Duration as D
